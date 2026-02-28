@@ -64,14 +64,12 @@ public class RobotContainer {
         double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
         double leftAdd = 0;
         double rightAdd = 0;
-        if(m_VisionSubsystem.getTargetArea() < 1.4){
-          leftAdd = -0.6;
-          rightAdd = -0.6;
-        }
-        if(m_VisionSubsystem.getTargetArea() < 1){
-          leftAdd += 0.2;
-          rightAdd += 0.2;
-
+        if(m_VisionSubsystem.targets()){
+          if(m_VisionSubsystem.getTargetArea() < 12){
+            leftAdd = -0.5;
+            rightAdd = -0.5;
+          }
+        
         }
         leftAdd = leftAdd + turn;
         rightAdd = rightAdd - turn;

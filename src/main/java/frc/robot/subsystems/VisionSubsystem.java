@@ -36,8 +36,17 @@ double targetDistance = 1.0; // meters from tag you want to stop at
         }else {
             return 0;
         }
+       
     }
+    public boolean targets(){
+        if(result.hasTargets()){
+            return true;
+        }else{
+            return false;
+        }
 
+
+    } 
 
     
 }
