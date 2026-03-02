@@ -13,7 +13,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -21,6 +24,7 @@ public class DriveTrain extends SubsystemBase {
   PIDController angleController = new PIDController(0.014, 0, 0.0001);
   private PigeonIMU pigeon;
   double targetDistance = 1.0; 
+  GeneralStatus generalStatus = new GeneralStatus();
   public DriveTrain() {
     pigeon = new PigeonIMU(30);
     SparkMaxConfig config = new SparkMaxConfig();
@@ -82,7 +86,12 @@ public class DriveTrain extends SubsystemBase {
   }
   public double getYaw() {
     double[] ypr = new double[3];
-  pigeon.getYawPitchRoll(ypr);
+   ErrorCode error = pigeon.getYawPitchRoll(ypr);
+   if (error != ErrorCode.OK){
+    System.out.println("Error" + error);
+   }
+   pigeon.getGeneralStatus(generalStatus);
+   System.out.println(generalStatus);
   return ypr[0];    
 
   }
