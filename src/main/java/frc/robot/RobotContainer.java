@@ -50,7 +50,11 @@ public class RobotContainer {
   }
 
   public void teleopPeriodic(){
-
+    int number = 0;
+    if (number == 0){
+      m_DriveTrain.zeroGyro();
+    }
+    number += 1;
     m_DriveTrain.periodic();
     if(m_XboxController.getAButton()){
       m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
@@ -78,7 +82,7 @@ public class RobotContainer {
        m_DriveTrain.setSpeed(0, 0);
        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
       }
-     
+     System.out.println("Pigeon Yaw: " + m_DriveTrain.getYaw());
 
 
 
