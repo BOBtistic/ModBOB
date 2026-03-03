@@ -50,11 +50,6 @@ public class RobotContainer {
   }
 
   public void teleopPeriodic(){
-    int number = 0;
-    if (number == 0){
-      m_DriveTrain.zeroGyro();
-    }
-    number += 1;
     m_DriveTrain.periodic();
     if(m_XboxController.getAButton()){
       m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);

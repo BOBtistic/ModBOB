@@ -31,6 +31,7 @@ public class DriveTrain extends SubsystemBase {
     config.idleMode(IdleMode.kBrake);
     Left.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Right.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    pigeon.setYaw(0);
     Left.getEncoder().setPosition(0);
     Right.getEncoder().setPosition(0);
   }
@@ -95,7 +96,4 @@ public class DriveTrain extends SubsystemBase {
   return ypr[0];    
 
   }
-  public void zeroGyro() {
-    pigeon.setYaw(0);
-  } 
 }
