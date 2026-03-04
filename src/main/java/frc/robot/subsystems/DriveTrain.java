@@ -14,7 +14,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
@@ -85,15 +84,37 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("distance", out);
 
   }
-  public double getYaw() {
-    double[] ypr = new double[3];
-   ErrorCode error = pigeon.getYawPitchRoll(ypr);
-   if (error != ErrorCode.OK){
-    System.out.println("Error" + error);
-   }
+  public double getHeading() {
+    double yaw = pigeon.getYaw();
    pigeon.getGeneralStatus(generalStatus);
    System.out.println(generalStatus);
-  return ypr[0];    
-
+     
+    if (yaw > 180) yaw -= 360;
+    if (yaw < -180) yaw += 360;
+    return yaw;
   }
+  public void zeroGyro(){
+    pigeon.setYaw(0);
+  }
+  public void turnToAngle(double targetAngle) {
+    double currentHeading = getHeading();
+    double error = targetAngle - currentHeading;
+
+    double kP = 0.01; // turning strength (you can tune this)
+    double turnSpeed = kP * error;
+
+    // limit speed so it doesn't go crazy
+    turnSpeed = Math.max(-0.5, Math.min(0.5, turnSpeed));
+
+    // Tank drive: left = +turn, right = -turn
+    Left.set(turnSpeed);
+    Right.set(turnSpeed);
+}
+public boolean atAngle(double targetAngle) {
+    return Math.abs(targetAngle - getHeading()) < 2.0; // within 2 degrees
+}
+public void stopMotors() {
+    Left.set(0);
+    Right.set(0);
+}
 }

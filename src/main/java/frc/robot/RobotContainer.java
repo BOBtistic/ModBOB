@@ -7,6 +7,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.VisionSubsystem;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -50,6 +51,7 @@ public class RobotContainer {
   }
 
   public void teleopPeriodic(){
+    SmartDashboard.putNumber("Pigeon Yaw", m_DriveTrain.getHeading());
     m_DriveTrain.periodic();
     if(m_XboxController.getAButton()){
       m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
@@ -77,11 +79,23 @@ public class RobotContainer {
        m_DriveTrain.setSpeed(0, 0);
        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
       }
-     System.out.println("Pigeon Yaw: " + m_DriveTrain.getYaw());
-
+      if(m_XboxController.getRightBumper()){
+        m_DriveTrain.zeroGyro();
+      }
 
 
   }
-  
-
+  public void autonomousInit() {
+    m_DriveTrain.zeroGyro();
 }
+public void runAutonomous() {
+    double targetAngle = 90.0;
+
+    if (!m_DriveTrain.atAngle(targetAngle)) {
+        m_DriveTrain.turnToAngle(targetAngle);
+    } else {
+        m_DriveTrain.stopMotors();
+    }
+}
+}
+
