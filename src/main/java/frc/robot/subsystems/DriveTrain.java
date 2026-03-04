@@ -117,4 +117,20 @@ public void stopMotors() {
     Left.set(0);
     Right.set(0);
 }
+public void driveStraight(double speed, double targetHeading) {
+    double currentHeading = getHeading();
+    double error = targetHeading - currentHeading;
+
+    double kP = 0.02; // correction strength (tune later)
+    double correction = kP * error;
+
+    // limit correction
+    correction = Math.max(-0.3, Math.min(0.3, correction));
+
+    double leftSpeed = speed + correction;
+    double rightSpeed = speed - correction;
+
+    Left.set(leftSpeed);
+    Right.set(rightSpeed);
+}
 }

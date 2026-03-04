@@ -25,6 +25,7 @@ public class RobotContainer {
   private final DriveTrain m_DriveTrain = new DriveTrain();
   private final XboxController m_XboxController = new XboxController(0);
   private final VisionSubsystem m_VisionSubsystem = new VisionSubsystem();
+  boolean needtoturn = false;
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -96,6 +97,39 @@ public void runAutonomous() {
     } else {
         m_DriveTrain.stopMotors();
     }
+}
+public void TrackTheBall(){ 
+        double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
+        double leftAdd = 0;
+        double rightAdd = 0;
+        if(!needtoturn){
+        if(m_VisionSubsystem.targets()){
+          if(m_VisionSubsystem.getTargetArea() < 8){
+            leftAdd = -0.5;
+            rightAdd = -0.5;
+          }
+        else{
+          needtoturn = true;
+          turn = 0;
+        }
+      }else{
+          needtoturn = true;
+          turn = 0;
+        }
+        leftAdd = leftAdd + turn;
+        rightAdd = rightAdd - turn;
+        m_DriveTrain.setSpeed(leftAdd, rightAdd);
+      }else{
+        double targetAngle = 180.0;
+
+    if (!m_DriveTrain.atAngle(targetAngle)) {
+        m_DriveTrain.turnToAngle(targetAngle);
+    } else {
+        m_DriveTrain.stopMotors();
+        needtoturn = false;
+    }
+      }
+
 }
 }
 
