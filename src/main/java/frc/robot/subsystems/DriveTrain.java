@@ -89,8 +89,8 @@ public class DriveTrain extends SubsystemBase {
    pigeon.getGeneralStatus(generalStatus);
    System.out.println(generalStatus);
      
-    if (yaw > 180) yaw -= 360;
-    if (yaw < -180) yaw += 360;
+    if (yaw > 360) yaw -= 360;
+    if (yaw < -360) yaw += 360;
     return yaw;
   }
   public void zeroGyro(){
