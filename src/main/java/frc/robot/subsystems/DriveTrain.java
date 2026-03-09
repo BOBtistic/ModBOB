@@ -17,16 +17,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
-
 public class DriveTrain extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   PIDController angleController = new PIDController(0.014, 0, 0.0001);
   private PigeonIMU pigeon;
-  double targetDistance = 1.0; 
+  double targetDistance = 1.0;
   GeneralStatus generalStatus = new GeneralStatus();
+
   public DriveTrain() {
     pigeon = new PigeonIMU(30);
     SparkMaxConfig config = new SparkMaxConfig();
+    config.openLoopRampRate(.23);
     config.idleMode(IdleMode.kBrake);
     Left.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Right.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -38,64 +39,74 @@ public class DriveTrain extends SubsystemBase {
   SparkMax Left = new SparkMax(1, MotorType.kBrushless);
   SparkMax Right = new SparkMax(2, MotorType.kBrushless);
   double _target = 0;
-  public void setSpeed(double leftSpeed, double rightSpeed){
 
-    if(leftSpeed < .10 && leftSpeed > -.10){
+  public void setSpeed(double leftSpeed, double rightSpeed) {
+
+    if (leftSpeed < .10 && leftSpeed > -.10) {
       leftSpeed = 0;
     }
     Left.set(-leftSpeed);
 
-    if(rightSpeed < .10 && rightSpeed > -.10){
+    if (rightSpeed < .10 && rightSpeed > -.10) {
       rightSpeed = 0;
     }
     Right.set(rightSpeed);
 
   }
+
   @Override
-  public void periodic(){
+  public void periodic() {
     SmartDashboard.putNumber("Left Motor Rotations", Left.getEncoder().getPosition());
     SmartDashboard.putNumber("Right Motor Rotations", Right.getEncoder().getPosition());
-    if(_target > 0){
-      if(Left.getEncoder().getPosition() >= _target){
-      _target = 0;
-      setSpeed(0, 0);
-    }else{
-      setSpeed(-.25, -.25);
+    if (_target > 0) {
+      if (Left.getEncoder().getPosition() >= _target) {
+        _target = 0;
+        setSpeed(0, 0);
+      } else {
+        setSpeed(-.25, -.25);
 
       }
-    } 
+    }
 
   }
-  public void autoDrive(double target){
+
+  public void autoDrive(double target) {
     _target = target;
     Left.getEncoder().setPosition(0);
     Right.getEncoder().setPosition(0);
 
   }
-  public double trackball(double x, boolean setSpeed){
+
+  public double trackball(double x, boolean setSpeed) {
     double out = angleController.calculate(x, 0);
     out = Math.min(1, Math.max(out, -1));
-    if(setSpeed){setSpeed(out, -out);}
+    if (setSpeed) {
+      setSpeed(out, -out);
+    }
     SmartDashboard.putNumber("out", out);
     return out;
   }
-  public void lineUp(double y){
+
+  public void lineUp(double y) {
     double out = y;
     SmartDashboard.putNumber("distance", out);
 
   }
+
   public double getHeading() {
     double yaw = pigeon.getYaw();
-   pigeon.getGeneralStatus(generalStatus);
-   System.out.println(generalStatus);
-     
-    if (yaw > 360) yaw -= 360;
-    if (yaw < -360) yaw += 360;
+
+    if (yaw > 360)
+      yaw -= 360;
+    if (yaw < -360)
+      yaw += 360;
     return yaw;
   }
-  public void zeroGyro(){
+
+  public void zeroGyro() {
     pigeon.setYaw(0);
   }
+
   public void turnToAngle(double targetAngle) {
     double currentHeading = getHeading();
     double error = targetAngle - currentHeading;
@@ -109,15 +120,18 @@ public class DriveTrain extends SubsystemBase {
     // Tank drive: left = +turn, right = -turn
     Left.set(turnSpeed);
     Right.set(turnSpeed);
-}
-public boolean atAngle(double targetAngle) {
+  }
+
+  public boolean atAngle(double targetAngle) {
     return Math.abs(targetAngle - getHeading()) < 2.0; // within 2 degrees
-}
-public void stopMotors() {
+  }
+
+  public void stopMotors() {
     Left.set(0);
     Right.set(0);
-}
-public void driveStraight(double speed, double targetHeading) {
+  }
+
+  public void driveStraight(double speed, double targetHeading) {
     double currentHeading = getHeading();
     double error = targetHeading - currentHeading;
 
@@ -132,5 +146,5 @@ public void driveStraight(double speed, double targetHeading) {
 
     Left.set(leftSpeed);
     Right.set(rightSpeed);
-}
+  }
 }
