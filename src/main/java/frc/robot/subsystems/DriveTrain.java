@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -36,8 +36,8 @@ public class DriveTrain extends SubsystemBase {
     Right.getEncoder().setPosition(0);
   }
 
-  SparkMax Left = new SparkMax(1, MotorType.kBrushless);
-  SparkMax Right = new SparkMax(2, MotorType.kBrushless);
+  SparkFlex Left = new SparkFlex(1, MotorType.kBrushless);
+  SparkFlex Right = new SparkFlex(2, MotorType.kBrushless);
   double _target = 0;
 
   public void setSpeed(double leftSpeed, double rightSpeed) {
@@ -81,7 +81,7 @@ public class DriveTrain extends SubsystemBase {
     double out = angleController.calculate(x, 0);
     out = Math.min(1, Math.max(out, -1));
     if (setSpeed) {
-      setSpeed(out, -out);
+      setSpeed(-out, -out);
     }
     SmartDashboard.putNumber("out", out);
     return out;

@@ -84,7 +84,7 @@ public class RobotContainer {
         }
 
       }
-      leftAdd = leftAdd + turn;
+      leftAdd = leftAdd - turn;
       rightAdd = rightAdd - turn;
       m_DriveTrain.setSpeed(leftAdd, rightAdd);
     } else {
