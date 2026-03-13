@@ -13,7 +13,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
@@ -37,8 +36,17 @@ public class DriveTrain extends SubsystemBase {
   }
 
   SparkFlex Left = new SparkFlex(1, MotorType.kBrushless);
+  double TravelL = Left.getEncoder().getPosition() * 0.05;
+
   SparkFlex Right = new SparkFlex(2, MotorType.kBrushless);
+  double TravelR = Right.getEncoder().getPosition() * 0.05;
   double _target = 0;
+
+  public void zeroMotors() {
+    Left.getEncoder().setPosition(0);
+    Right.getEncoder().setPosition(0);
+
+  }
 
   public void setSpeed(double leftSpeed, double rightSpeed) {
 
@@ -58,6 +66,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Left Motor Rotations", Left.getEncoder().getPosition());
     SmartDashboard.putNumber("Right Motor Rotations", Right.getEncoder().getPosition());
+
     if (_target > 0) {
       if (Left.getEncoder().getPosition() >= _target) {
         _target = 0;
@@ -146,5 +155,17 @@ public class DriveTrain extends SubsystemBase {
 
     Left.set(leftSpeed);
     Right.set(rightSpeed);
+  }
+
+  public void resetEncoders() {
+    Left.getEncoder().setPosition(0);
+    Right.getEncoder().setPosition(0);
+  }
+
+  public double meters() {
+    TravelL = Left.getEncoder().getPosition() * 0.0554;
+    TravelR = Right.getEncoder().getPosition() * 0.0554;
+    return (TravelL + -TravelR) / 2;
+
   }
 }

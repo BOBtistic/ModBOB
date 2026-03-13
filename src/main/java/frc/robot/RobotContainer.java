@@ -94,7 +94,9 @@ public class RobotContainer {
     if (m_XboxController.getRightBumper()) {
       m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getLeftY());
     }
-
+    if (m_XboxController.getStartButton()) {
+      m_DriveTrain.resetEncoders();
+    }
   }
 
   public void autonomousInit() {
@@ -141,6 +143,21 @@ public class RobotContainer {
       rightAdd = -0.2;
     }
 
+  }
+
+  public void meter() {
+    if (m_DriveTrain.meters() < 2.5) {
+      m_DriveTrain.setSpeed(-0.2, -0.2);
+    } else if (m_DriveTrain.meters() < 3) {
+      m_DriveTrain.setSpeed(-0.1, -0.1);
+    } else {
+      m_DriveTrain.setSpeed(0, 0);
+    }
+    SmartDashboard.putNumber("Meters:", m_DriveTrain.meters());
+  }
+
+  public void zeroMotors() {
+    m_DriveTrain.zeroMotors();
   }
 
 }
