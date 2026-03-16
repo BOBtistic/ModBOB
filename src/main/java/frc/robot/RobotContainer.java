@@ -7,6 +7,9 @@ package frc.robot;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.VisionSubsystem;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,6 +32,7 @@ public class RobotContainer {
   private final VisionSubsystem m_VisionSubsystem = new VisionSubsystem();
   boolean needtoturn = false;
   double offTurn = 0;
+  SparkFlex intake = new SparkFlex(3, MotorType.kBrushless);
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /**
@@ -97,6 +101,11 @@ public class RobotContainer {
     if (m_XboxController.getStartButton()) {
       m_DriveTrain.resetEncoders();
     }
+    if (m_XboxController.getLeftBumper()) {
+      intake.set(-0.4);
+    } else {
+      intake.set(0);
+    }
   }
 
   public void autonomousInit() {
@@ -111,6 +120,7 @@ public class RobotContainer {
     } else {
       m_DriveTrain.stopMotors();
     }
+
   }
 
   public void TrackTheBall() {
