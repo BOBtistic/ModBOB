@@ -102,7 +102,7 @@ public class RobotContainer {
       m_DriveTrain.resetEncoders();
     }
     if (m_XboxController.getLeftBumper()) {
-      intake.set(-0.4);
+      intake.set(0.85);
     } else {
       intake.set(0);
     }
