@@ -24,13 +24,13 @@ public class DriveTrain extends SubsystemBase {
   GeneralStatus generalStatus = new GeneralStatus();
 
   public DriveTrain() {
-    pigeon = new PigeonIMU(30);
+    // pigeon = new PigeonIMU(30);
     SparkMaxConfig config = new SparkMaxConfig();
     config.openLoopRampRate(.23);
     config.idleMode(IdleMode.kBrake);
     Left.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     Right.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    pigeon.setYaw(0);
+    // pigeon.setYaw(0);
     Left.getEncoder().setPosition(0);
     Right.getEncoder().setPosition(0);
   }
@@ -102,60 +102,64 @@ public class DriveTrain extends SubsystemBase {
 
   }
 
-  public double getHeading() {
-    double yaw = pigeon.getYaw();
+  // public double getHeading() {
+  // double yaw = pigeon.getYaw();
 
-    if (yaw > 360)
-      yaw -= 360;
-    if (yaw < -360)
-      yaw += 360;
-    return yaw;
-  }
+  // if (yaw > 360)
+  // yaw -= 360;
+  // if (yaw < -360)
+  // yaw += 360;
+  // return yaw;
+  // }
 
-  public void zeroGyro() {
-    pigeon.setYaw(0);
-  }
+  // public void zeroGyro() {
+  // pigeon.setYaw(0);
+  // }
 
-  public void turnToAngle(double targetAngle) {
-    double currentHeading = getHeading();
-    double error = targetAngle - currentHeading;
+  /*
+   * public void turnToAngle(double targetAngle) {
+   * double currentHeading = getHeading();
+   * double error = targetAngle - currentHeading;
+   * 
+   * double kP = 0.01; // turning strength (you can tune this)
+   * double turnSpeed = kP * error;
+   * 
+   * // limit speed so it doesn't go crazy
+   * turnSpeed = Math.max(-0.5, Math.min(0.5, turnSpeed));
+   * 
+   * // Tank drive: left = +turn, right = -turn
+   * Left.set(turnSpeed);
+   * Right.set(turnSpeed);
+   * }
+   */
 
-    double kP = 0.01; // turning strength (you can tune this)
-    double turnSpeed = kP * error;
-
-    // limit speed so it doesn't go crazy
-    turnSpeed = Math.max(-0.5, Math.min(0.5, turnSpeed));
-
-    // Tank drive: left = +turn, right = -turn
-    Left.set(turnSpeed);
-    Right.set(turnSpeed);
-  }
-
-  public boolean atAngle(double targetAngle) {
-    return Math.abs(targetAngle - getHeading()) < 2.0; // within 2 degrees
-  }
-
-  public void stopMotors() {
-    Left.set(0);
-    Right.set(0);
-  }
-
-  public void driveStraight(double speed, double targetHeading) {
-    double currentHeading = getHeading();
-    double error = targetHeading - currentHeading;
-
-    double kP = 0.02; // correction strength (tune later)
-    double correction = kP * error;
-
-    // limit correction
-    correction = Math.max(-0.3, Math.min(0.3, correction));
-
-    double leftSpeed = speed + correction;
-    double rightSpeed = speed - correction;
-
-    Left.set(leftSpeed);
-    Right.set(rightSpeed);
-  }
+  /*
+   * public boolean atAngle(double targetAngle) {
+   * return Math.abs(targetAngle - getHeading()) < 2.0; // within 2 degrees
+   * }
+   * 
+   * public void stopMotors() {
+   * Left.set(0);
+   * Right.set(0);
+   * }
+   * 
+   * public void driveStraight(double speed, double targetHeading) {
+   * double currentHeading = getHeading();
+   * double error = targetHeading - currentHeading;
+   * 
+   * double kP = 0.02; // correction strength (tune later)
+   * double correction = kP * error;
+   * 
+   * // limit correction
+   * correction = Math.max(-0.3, Math.min(0.3, correction));
+   * 
+   * double leftSpeed = speed + correction;
+   * double rightSpeed = speed - correction;
+   * 
+   * Left.set(leftSpeed);
+   * Right.set(rightSpeed);
+   * }
+   */
 
   public void resetEncoders() {
     Left.getEncoder().setPosition(0);
