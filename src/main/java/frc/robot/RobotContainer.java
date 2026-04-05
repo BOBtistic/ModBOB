@@ -105,6 +105,12 @@ public class RobotContainer {
     } else {
       intake.set(0);
     }
+    if (m_XboxController.getRightTriggerAxis() > 0.1) {
+      m_DriveTrain.Shooter(m_XboxController.getRightTriggerAxis());
+    } else {
+      m_DriveTrain.Shooter(0);
+    }
+
   }
 
   // public void autonomousInit() {
@@ -122,39 +128,37 @@ public class RobotContainer {
 
   // }
 
-  /*
-   * public void TrackTheBall() {
-   * double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
-   * double leftAdd = 0;
-   * double rightAdd = 0;
-   * if (!needtoturn) {
-   * if (m_VisionSubsystem.targets()) {
-   * if (m_VisionSubsystem.getTargetArea() < 6) {
-   * leftAdd = -0.5;
-   * rightAdd = -0.5;
-   * } else {
-   * needtoturn = true;
-   * offTurn += 90;
-   * turn = 0;
-   * }
-   * } else {
-   * needtoturn = true;
-   * turn = 0;
-   * leftAdd = 0.15;
-   * rightAdd = -0.15;
-   * }
-   * leftAdd = leftAdd + turn;
-   * rightAdd = rightAdd - turn;
-   * m_DriveTrain.setSpeed(leftAdd, rightAdd);
-   * } else if (m_VisionSubsystem.targets() && m_DriveTrain.atAngle(offTurn)) {
-   * needtoturn = false;
-   * } else {
-   * leftAdd = 0.2;
-   * rightAdd = -0.2;
-   * }
-   */
+  public void TrackTheBall() {
+    double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
+    double leftAdd = 0;
+    double rightAdd = 0;
+    if (!needtoturn) {
+      if (m_VisionSubsystem.targets()) {
+        if (m_VisionSubsystem.getTargetArea() < 6) {
+          leftAdd = -0.5;
+          rightAdd = -0.5;
+        } else {
+          needtoturn = true;
+          offTurn += 90;
+          turn = 0;
+        }
+      } else {
+        needtoturn = true;
+        turn = 0;
+        leftAdd = 0.15;
+        rightAdd = -0.15;
+      }
+      leftAdd = leftAdd + turn;
+      rightAdd = rightAdd - turn;
+      m_DriveTrain.setSpeed(leftAdd, rightAdd);
+    } else if (m_VisionSubsystem.targets()) {
+      needtoturn = false;
+    } else {
+      leftAdd = 0.01;
+      rightAdd = -0.01;
+    }
 
-  // }
+  }
 
   public void meter() {
     if (m_DriveTrain.meters() < 2.5) {

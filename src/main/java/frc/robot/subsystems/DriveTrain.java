@@ -11,17 +11,24 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.GeneralStatus;
 
 public class DriveTrain extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   PIDController angleController = new PIDController(0.014, 0, 0.0001);
-  private PigeonIMU pigeon;
   double targetDistance = 1.0;
   GeneralStatus generalStatus = new GeneralStatus();
+  private final AnalogInput frontSound = new AnalogInput(4);
+
+  public double getDistance() {
+    double volts = frontSound.getAverageVoltage();
+    double distanceMM = 1023.519 * volts + 0.109;
+
+    return distanceMM;
+  }
 
   public DriveTrain() {
     // pigeon = new PigeonIMU(30);
@@ -35,6 +42,7 @@ public class DriveTrain extends SubsystemBase {
     Right.getEncoder().setPosition(0);
   }
 
+  SparkFlex Shoot = new SparkFlex(4, MotorType.kBrushless);
   SparkFlex Left = new SparkFlex(1, MotorType.kBrushless);
   double TravelL = Left.getEncoder().getPosition() * 0.05;
 
@@ -66,6 +74,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Left Motor Rotations", Left.getEncoder().getPosition());
     SmartDashboard.putNumber("Right Motor Rotations", Right.getEncoder().getPosition());
+    SmartDashboard.putNumber("Front Distance", getDistance());
 
     if (_target > 0) {
       if (Left.getEncoder().getPosition() >= _target) {
@@ -100,6 +109,10 @@ public class DriveTrain extends SubsystemBase {
     double out = y;
     SmartDashboard.putNumber("distance", out);
 
+  }
+
+  public void Shooter(double fireSpeed) {
+    Shoot.set(fireSpeed);
   }
 
   // public double getHeading() {
