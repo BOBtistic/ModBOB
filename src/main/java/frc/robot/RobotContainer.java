@@ -6,10 +6,6 @@ package frc.robot;
 
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.VisionSubsystem;
-
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,7 +28,7 @@ public class RobotContainer {
   private final VisionSubsystem m_VisionSubsystem = new VisionSubsystem();
   boolean needtoturn = false;
   double offTurn = 0;
-  SparkFlex intake = new SparkFlex(3, MotorType.kBrushless);
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   /**
@@ -68,47 +64,45 @@ public class RobotContainer {
 
   public void teleopPeriodic() {
     m_DriveTrain.periodic();
-    if (m_XboxController.getAButton()) {
-      m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
-    } else if (m_XboxController.getXButton()) {
-      if (m_VisionSubsystem.getTargetArea() < 1.2) {
-        m_DriveTrain.setSpeed(-0.4, -0.4);
+    if (m_DriveTrain.frontdis() > 3) {
+      if (m_XboxController.getAButton()) {
+        m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
+      } else if (m_XboxController.getXButton()) {
+        if (m_VisionSubsystem.getTargetArea() < 1.2) {
+          m_DriveTrain.setSpeed(-0.4, -0.4);
+        } else {
+          m_DriveTrain.setSpeed(0, 0);
+        }
+      } else if (m_XboxController.getYButton()) {
+        double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
+        double leftAdd = 0;
+        double rightAdd = 0;
+        if (m_VisionSubsystem.targets()) {
+          if (m_VisionSubsystem.getTargetArea() < 12) {
+            leftAdd = -0.5;
+            rightAdd = -0.5;
+          }
+
+        }
+        leftAdd = leftAdd - turn;
+        rightAdd = rightAdd - turn;
+        m_DriveTrain.setSpeed(leftAdd, rightAdd);
       } else {
         m_DriveTrain.setSpeed(0, 0);
+        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
       }
-    } else if (m_XboxController.getYButton()) {
-      double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
-      double leftAdd = 0;
-      double rightAdd = 0;
-      if (m_VisionSubsystem.targets()) {
-        if (m_VisionSubsystem.getTargetArea() < 12) {
-          leftAdd = -0.5;
-          rightAdd = -0.5;
-        }
+      if (m_XboxController.getRightBumper()) {
+        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getLeftY());
+      }
+      if (m_XboxController.getStartButton()) {
+        m_DriveTrain.resetEncoders();
+      }
+      if (m_DriveTrain.frontdis() < 0.5) {
+        m_DriveTrain.setSpeed(0.5, -0.5);
 
       }
-      leftAdd = leftAdd - turn;
-      rightAdd = rightAdd - turn;
-      m_DriveTrain.setSpeed(leftAdd, rightAdd);
     } else {
-      m_DriveTrain.setSpeed(0, 0);
-      m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
-    }
-    if (m_XboxController.getRightBumper()) {
-      m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getLeftY());
-    }
-    if (m_XboxController.getStartButton()) {
-      m_DriveTrain.resetEncoders();
-    }
-    if (m_XboxController.getLeftBumper()) {
-      intake.set(-0.5);
-    } else {
-      intake.set(0);
-    }
-    if (m_XboxController.getRightTriggerAxis() > 0.1) {
-      m_DriveTrain.Shooter(m_XboxController.getRightTriggerAxis());
-    } else {
-      m_DriveTrain.Shooter(0);
+      m_DriveTrain.setSpeed(0.2, 0.2);
     }
 
   }
@@ -132,6 +126,7 @@ public class RobotContainer {
     double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
     double leftAdd = 0;
     double rightAdd = 0;
+
     if (!needtoturn) {
       if (m_VisionSubsystem.targets()) {
         if (m_VisionSubsystem.getTargetArea() < 6) {

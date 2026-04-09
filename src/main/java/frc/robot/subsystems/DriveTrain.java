@@ -22,11 +22,14 @@ public class DriveTrain extends SubsystemBase {
   double targetDistance = 1.0;
   GeneralStatus generalStatus = new GeneralStatus();
   private final AnalogInput frontSound = new AnalogInput(4);
+  private final AnalogInput rightSound = new AnalogInput(5);
+  private final AnalogInput leftSound = new AnalogInput(6);
+  private final AnalogInput rearSound = new AnalogInput(7);
 
-  public double getDistance() {
-    double volts = frontSound.getAverageVoltage();
-    double distanceMM = 1023.519 * volts + 0.109;
-
+  public double getDistance(AnalogInput sensor) {
+    double volts = sensor.getAverageVoltage();
+    double distanceMM = 0;
+    distanceMM = (1023.519 * volts + 0.109) / 25.4 / 12;
     return distanceMM;
   }
 
@@ -42,7 +45,6 @@ public class DriveTrain extends SubsystemBase {
     Right.getEncoder().setPosition(0);
   }
 
-  SparkFlex Shoot = new SparkFlex(4, MotorType.kBrushless);
   SparkFlex Left = new SparkFlex(1, MotorType.kBrushless);
   double TravelL = Left.getEncoder().getPosition() * 0.05;
 
@@ -72,10 +74,10 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Motor Rotations", Left.getEncoder().getPosition());
-    SmartDashboard.putNumber("Right Motor Rotations", Right.getEncoder().getPosition());
-    SmartDashboard.putNumber("Front Distance", getDistance());
-
+    SmartDashboard.putNumber("Front Distance", getDistance(frontSound));
+    SmartDashboard.putNumber("Right Distance", getDistance(rightSound));
+    SmartDashboard.putNumber("Left Distance", getDistance(leftSound));
+    SmartDashboard.putNumber("Rear Distance", getDistance(rearSound));
     if (_target > 0) {
       if (Left.getEncoder().getPosition() >= _target) {
         _target = 0;
@@ -111,8 +113,9 @@ public class DriveTrain extends SubsystemBase {
 
   }
 
-  public void Shooter(double fireSpeed) {
-    Shoot.set(fireSpeed);
+  public double frontdis() {
+    double dis = getDistance(frontSound);
+    return dis;
   }
 
   // public double getHeading() {
@@ -183,6 +186,15 @@ public class DriveTrain extends SubsystemBase {
     TravelL = Left.getEncoder().getPosition() * 0.0554;
     TravelR = Right.getEncoder().getPosition() * 0.0554;
     return (TravelL + -TravelR) / 2;
+
+  }
+
+  public double anticrash() {
+    double Lspeed = Left.getEncoder().getVelocity();
+
+    double anticrash = 16 * (Lspeed) - .45;
+
+    return anticrash;
 
   }
 }
