@@ -64,47 +64,43 @@ public class RobotContainer {
 
   public void teleopPeriodic() {
     m_DriveTrain.periodic();
-    if (m_DriveTrain.frontdis() > 3) {
-      if (m_XboxController.getAButton()) {
-        m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
-      } else if (m_XboxController.getXButton()) {
-        if (m_VisionSubsystem.getTargetArea() < 1.2) {
-          m_DriveTrain.setSpeed(-0.4, -0.4);
-        } else {
-          m_DriveTrain.setSpeed(0, 0);
-        }
-      } else if (m_XboxController.getYButton()) {
-        double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
-        double leftAdd = 0;
-        double rightAdd = 0;
-        if (m_VisionSubsystem.targets()) {
-          if (m_VisionSubsystem.getTargetArea() < 12) {
-            leftAdd = -0.5;
-            rightAdd = -0.5;
-          }
 
-        }
-        leftAdd = leftAdd - turn;
-        rightAdd = rightAdd - turn;
-        m_DriveTrain.setSpeed(leftAdd, rightAdd);
+    if (m_XboxController.getAButton()) {
+      m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), true);
+    } else if (m_XboxController.getXButton()) {
+      if (m_VisionSubsystem.getTargetArea() < 1.2) {
+        m_DriveTrain.setSpeed(-0.4, -0.4);
       } else {
         m_DriveTrain.setSpeed(0, 0);
-        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
       }
-      if (m_XboxController.getRightBumper()) {
-        m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getLeftY());
-      }
-      if (m_XboxController.getStartButton()) {
-        m_DriveTrain.resetEncoders();
-      }
-      if (m_DriveTrain.frontdis() < 0.5) {
-        m_DriveTrain.setSpeed(0.5, -0.5);
+    } else if (m_XboxController.getYButton()) {
+      double turn = m_DriveTrain.trackball(m_VisionSubsystem.getTargetX(), false);
+      double leftAdd = 0;
+      double rightAdd = 0;
+      if (m_VisionSubsystem.targets()) {
+        if (m_VisionSubsystem.getTargetArea() < 12) {
+          leftAdd = -0.5;
+          rightAdd = -0.5;
+        }
 
       }
+      leftAdd = leftAdd - turn;
+      rightAdd = rightAdd - turn;
+      m_DriveTrain.setSpeed(leftAdd, rightAdd);
     } else {
-      m_DriveTrain.setSpeed(0.2, 0.2);
+      m_DriveTrain.setSpeed(0, 0);
+      m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getRightY());
     }
+    if (m_XboxController.getRightBumper()) {
+      m_DriveTrain.setSpeed(m_XboxController.getLeftY(), m_XboxController.getLeftY());
+    }
+    if (m_XboxController.getStartButton()) {
+      m_DriveTrain.resetEncoders();
+    }
+    if (m_DriveTrain.frontdis() < 0.5) {
+      m_DriveTrain.setSpeed(0.5, -0.5);
 
+    }
   }
 
   // public void autonomousInit() {
